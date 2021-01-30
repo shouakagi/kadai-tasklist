@@ -37,8 +37,9 @@ class TasksController < ApplicationController
         else
             flash.now[:danger] = 'タスクが編集されませんでした'
             render :new
+        end
     end
-
+    
     def destroy
         @task = Task.find(params[:id])
         @task.destroy
@@ -46,7 +47,6 @@ class TasksController < ApplicationController
         flash[:success] = 'タスクが削除されました'
         redirect_to tasks_path
     end
-end
 
 private
 
