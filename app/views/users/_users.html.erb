@@ -1,0 +1,13 @@
+<% if users.any? %>
+    <% users.each do |user| %>
+    <%= gravatar_url(user, { size: 50 }) %>
+       <%= user.name %>
+            <p><%= link_to 'View profile', user_path(user) %></p>
+       <% end %>
+    <%= paginate users %>
+<% end %>
+
+
+<%#Lesson 15Chapter 7.4 %>
+
+
