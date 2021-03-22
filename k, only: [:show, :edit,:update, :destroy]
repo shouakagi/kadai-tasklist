@@ -1,0 +1,645 @@
+[1mdiff --git a/Gemfile b/Gemfile[m
+[1mindex 44f5d2f..eae9424 100644[m
+[1m--- a/Gemfile[m
+[1m+++ b/Gemfile[m
+[36m@@ -25,7 +25,7 @@[m [mgem 'jbuilder', '~> 2.5'[m
+ # Use Redis adapter to run Action Cable in production[m
+ # gem 'redis', '~> 4.0'[m
+ # Use ActiveModel has_secure_password[m
+[31m-# gem 'bcrypt', '~> 3.1.7'[m
+[32m+[m[32mgem 'bcrypt', '~> 3.1.7'[m
+ [m
+ # Use Capistrano for deployment[m
+ # gem 'capistrano-rails', group: :development[m
+[1mdiff --git a/Gemfile.lock b/Gemfile.lock[m
+[1mindex 06be39e..8659de0 100644[m
+[1m--- a/Gemfile.lock[m
+[1m+++ b/Gemfile.lock[m
+[36m@@ -43,6 +43,7 @@[m [mGEM[m
+       minitest (~> 5.1)[m
+       tzinfo (~> 1.1)[m
+     arel (9.0.0)[m
+[32m+[m[32m    bcrypt (3.1.16)[m
+     bindex (0.8.1)[m
+     bootsnap (1.7.1)[m
+       msgpack (~> 1.0)[m
+[36m@@ -180,6 +181,7 @@[m [mPLATFORMS[m
+   ruby[m
+ [m
+ DEPENDENCIES[m
+[32m+[m[32m  bcrypt (~> 3.1.7)[m
+   bootsnap (>= 1.1.0)[m
+   byebug[m
+   coffee-rails (~> 4.2)[m
+[1mdiff --git a/app/assets/javascripts/sessions.coffee b/app/assets/javascripts/sessions.coffee[m
+[1mnew file mode 100644[m
+[1mindex 0000000..24f83d1[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/javascripts/sessions.coffee[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m# Place all the behaviors and hooks related to the matching controller here.[m
+[32m+[m[32m# All this logic will automatically be available in application.js.[m
+[32m+[m[32m# You can use CoffeeScript in this file: http://coffeescript.org/[m
+[1mdiff --git a/app/assets/javascripts/toppages.coffee b/app/assets/javascripts/toppages.coffee[m
+[1mnew file mode 100644[m
+[1mindex 0000000..24f83d1[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/javascripts/toppages.coffee[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m# Place all the behaviors and hooks related to the matching controller here.[m
+[32m+[m[32m# All this logic will automatically be available in application.js.[m
+[32m+[m[32m# You can use CoffeeScript in this file: http://coffeescript.org/[m
+[1mdiff --git a/app/assets/javascripts/users.coffee b/app/assets/javascripts/users.coffee[m
+[1mnew file mode 100644[m
+[1mindex 0000000..24f83d1[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/javascripts/users.coffee[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m# Place all the behaviors and hooks related to the matching controller here.[m
+[32m+[m[32m# All this logic will automatically be available in application.js.[m
+[32m+[m[32m# You can use CoffeeScript in this file: http://coffeescript.org/[m
+[1mdiff --git a/app/assets/stylesheets/sessions.scss b/app/assets/stylesheets/sessions.scss[m
+[1mnew file mode 100644[m
+[1mindex 0000000..7bef9cf[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/stylesheets/sessions.scss[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m// Place all the styles related to the sessions controller here.[m
+[32m+[m[32m// They will automatically be included in application.css.[m
+[32m+[m[32m// You can use Sass (SCSS) here: http://sass-lang.com/[m
+[1mdiff --git a/app/assets/stylesheets/toppages.scss b/app/assets/stylesheets/toppages.scss[m
+[1mnew file mode 100644[m
+[1mindex 0000000..22dc6c6[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/stylesheets/toppages.scss[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m// Place all the styles related to the toppages controller here.[m
+[32m+[m[32m// They will automatically be included in application.css.[m
+[32m+[m[32m// You can use Sass (SCSS) here: http://sass-lang.com/[m
+[1mdiff --git a/app/assets/stylesheets/users.scss b/app/assets/stylesheets/users.scss[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1efc835[m
+[1m--- /dev/null[m
+[1m+++ b/app/assets/stylesheets/users.scss[m
+[36m@@ -0,0 +1,3 @@[m
+[32m+[m[32m// Place all the styles related to the users controller here.[m
+[32m+[m[32m// They will automatically be included in application.css.[m
+[32m+[m[32m// You can use Sass (SCSS) here: http://sass-lang.com/[m
+[1mdiff --git a/app/controllers/application_controller.rb b/app/controllers/application_controller.rb[m
+[1mindex 09705d1..3fde086 100644[m
+[1m--- a/app/controllers/application_controller.rb[m
+[1m+++ b/app/controllers/application_controller.rb[m
+[36m@@ -1,2 +1,17 @@[m
+ class ApplicationController < ActionController::Base[m
+[31m-end[m
+[32m+[m[41m  [m
+[32m+[m[32m  include SessionsHelper[m
+[32m+[m[41m  [m
+[32m+[m[32m  private[m
+[32m+[m
+[32m+[m[32m  def require_user_logged_in[m
+[32m+[m[32m    unless logged_in?[m
+[32m+[m[32m      redirect_to login_url[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  def counts(user)[m
+[32m+[m[32m    @count_tasks = user.tasks.count[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32mend[m
+\ No newline at end of file[m
+[1mdiff --git a/app/controllers/sessions_controller.rb b/app/controllers/sessions_controller.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a5d6d46[m
+[1m--- /dev/null[m
+[1m+++ b/app/controllers/sessions_controller.rb[m
+[36m@@ -0,0 +1,37 @@[m
+[32m+[m[32mclass SessionsController < ApplicationController[m
+[32m+[m[32m  def new[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32mdef create[m
+[32m+[m[32m    email = params[:session][:email].downcase[m
+[32m+[m[32m    password = params[:session][:password][m
+[32m+[m[32m    if login(email, password)[m
+[32m+[m[32m      flash[:success] = 'ログインに成功しました。'[m
+[32m+[m[32m      redirect_to root_url[m
+[32m+[m[32m    else[m
+[32m+[m[32m      flash.now[:danger] = 'ログインに失敗しました。'[m
+[32m+[m[32m      render :new[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def destroy[m
+[32m+[m[32m        session[:user_id] = nil[m
+[32m+[m[32m    flash[:success] = 'ログアウトしました。'[m
+[32m+[m[32m    redirect_to root_url[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  private[m
+[32m+[m
+[32m+[m[32m  def login(email, password)[m
+[32m+[m[32m    @user = User.find_by(email: email)[m
+[32m+[m[32m    if @user && @user.authenticate(password)[m
+[32m+[m[32m      # ログイン成功[m
+[32m+[m[32m      session[:user_id] = @user.id[m
+[32m+[m[32m      return true[m
+[32m+[m[32m    else[m
+[32m+[m[32m      # ログイン失敗[m
+[32m+[m[32m      return false[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32mend[m
+[1mdiff --git a/app/controllers/tasks_controller.rb b/app/controllers/tasks_controller.rb[m
+[1mindex 3db19e4..875b81c 100644[m
+[1m--- a/app/controllers/tasks_controller.rb[m
+[1m+++ b/app/controllers/tasks_controller.rb[m
+[36m@@ -1,57 +1,39 @@[m
+ class TasksController < ApplicationController[m
+[31m-    before_action :set_task, only: [:show, :edit,:update, :destroy][m
+[31m-    [m
+[31m-    def index[m
+[31m-        @tasks = Task.all[m
+[31m-    end[m
+[31m-[m
+[31m-    def show[m
+[31m-    end[m
+[32m+[m[32m  before_action :require_user_logged_in[m
+[32m+[m[32m  before_action :correct_user, only: [:destroy][m
+[32m+[m[41m  [m
+[32m+[m[32m  def index[m
+[32m+[m[32m    @tasks = Task.all[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  def create[m
+[32m+[m[32m    @task = current_user.tasklist.build(task_params)[m
+[32m+[m[32m    if @task.save[m
+[32m+[m[32m      flash[:success] = 'メッセージを投稿しました。'[m
+[32m+[m[32m      redirect_to root_url[m
+[32m+[m[32m    else[m
+[32m+[m[32m      @tasks = current_user.tasks.order(id: :desc).page(params[:page])[m
+[32m+[m[32m      flash.now[:danger] = 'メッセージの投稿に失敗しました。'[m
+[32m+[m[32m      render 'toppages/index'[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+ [m
+[31m-    def new[m
+[31m-        @task =Task.new[m
+[31m-    end[m
+[32m+[m[32m  def destroy[m
+[32m+[m[32m    @task.destroy[m
+[32m+[m[32m    flash[:success] = 'メッセージを削除しました。'[m
+[32m+[m[32m    redirect_back(fallback_location: root_path)[m
+[32m+[m[32m  end[m
+ [m
+[31m-    def create[m
+[31m-        @task = Task.new(task_params)[m
+[31m-        [m
+[31m-        if @task.save[m
+[31m-            flash[:success] = 'タスクが投稿されました'[m
+[31m-            redirect_to @task[m
+[31m-        else[m
+[31m-            flash[:danger] = 'タスクが投稿されません'[m
+[31m-            render :new[m
+[31m-        end[m
+[31m-    end[m
+[32m+[m[32m  private[m
+ [m
+[31m-    def edit[m
+[31m-    end[m
+[31m-[m
+[31m-    def update[m
+[31m-        set_task[m
+[31m-        if @task.update(task_params)[m
+[31m-            flash[:success] = 'タスクが編集されました'[m
+[31m-            redirect_to @task[m
+[31m-        else[m
+[31m-            flash.now[:danger] = 'タスクが編集されませんでした'[m
+[31m-            render :new[m
+[31m-        end[m
+[31m-    end[m
+[31m-    [m
+[31m-    def destroy[m
+[31m-        @task.destroy[m
+[31m-        [m
+[31m-        flash[:success] = 'タスクが削除されました'[m
+[31m-        redirect_to tasks_path[m
+[31m-    end[m
+[31m-[m
+[31m-    private[m
+[31m-    [m
+[31m-    def set_task[m
+[31m-        @task = Task.find(params[:id])[m
+[31m-    end[m
+[32m+[m[32m  def task_params[m
+[32m+[m[32m    params.require(:task).permit(:content)[m
+[32m+[m[32m  end[m
+ [m
+[31m-    def task_params[m
+[31m-        params.require(:task).permit(:content, :status)[m
+[32m+[m[32m  def correct_user[m
+[32m+[m[32m    @task = current_user.tasks.find_by(id: params[:id])[m
+[32m+[m[32m    unless @task[m
+[32m+[m[32m      redirect_to root_url[m
+     end[m
+[32m+[m[32m  end[m
+ end[m
+\ No newline at end of file[m
+[1mdiff --git a/app/controllers/users_controller.rb b/app/controllers/users_controller.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f9e6f53[m
+[1m--- /dev/null[m
+[1m+++ b/app/controllers/users_controller.rb[m
+[36m@@ -0,0 +1,36 @@[m
+[32m+[m[32mclass UsersController < ApplicationController[m
+[32m+[m[32m  before_action :require_user_logged_in, only: [:index, :show][m
+[32m+[m[32m  def index[m
+[32m+[m[32m    @users = User.order(id: :desc).page(params[:page]).per(25)[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def show[m
+[32m+[m[32m    @user = User.find(params[:id])[m
+[32m+[m[32m    @tasks = @user.tasks.order(id: :desc).page(params[:page])[m
+[32m+[m[32m    counts(@user)[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def new[m
+[32m+[m[32m    @user = User.new[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def create[m
+[32m+[m[32m    @user = User.new(user_params)[m
+[32m+[m
+[32m+[m[32m    if @user.save[m
+[32m+[m[32m      flash[:success] = 'ユーザを登録しました。'[m
+[32m+[m[32m      redirect_to @user[m
+[32m+[m[32m    else[m
+[32m+[m[32m      flash.now[:danger] = 'ユーザの登録に失敗しました。'[m
+[32m+[m[32m      render :new[m
+[32m+[m[32m    end[m
+[32m+[m[41m    [m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32m  private[m
+[32m+[m
+[32m+[m[32m  def user_params[m
+[32m+[m[32m    params.require(:user).permit(:name, :email, :password, :password_confirmation)[m
+[32m+[m[32m  end[m
+[32m+[m[41m  [m
+[32m+[m[32mend[m
+[1mdiff --git a/app/helpers/sessions_helper.rb b/app/helpers/sessions_helper.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fdcc6b5[m
+[1m--- /dev/null[m
+[1m+++ b/app/helpers/sessions_helper.rb[m
+[36m@@ -0,0 +1,9 @@[m
+[32m+[m[32mmodule SessionsHelper[m
+[32m+[m[32m  def current_user[m
+[32m+[m[32m    @current_user ||= User.find_by(id: session[:user_id])[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  def logged_in?[m
+[32m+[m[32m    !!current_user[m
+[32m+[m[32m  end[m
+[32m+[m[32mend[m
+[1mdiff --git a/app/helpers/users_helper.rb b/app/helpers/users_helper.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..3915968[m
+[1m--- /dev/null[m
+[1m+++ b/app/helpers/users_helper.rb[m
+[36m@@ -0,0 +1,7 @@[m
+[32m+[m[32mmodule UsersHelper[m
+[32m+[m[32m  def gravatar_url(user, options = { size: 80 })[m
+[32m+[m[32m    gravatar_id = Digest::MD5::hexdigest(user.email.downcase)[m
+[32m+[m[32m    size = options[:size][m
+[32m+[m[32m    "https://secure.gravatar.com/avatar/#{gravatar_id}?s=#{size}"[m
+[32m+[m[32m  end[m
+[32m+[m[32mend[m
+\ No newline at end of file[m
+[1mdiff --git a/app/models/task.rb b/app/models/task.rb[m
+[1mindex 8c594e9..36f8fec 100644[m
+[1m--- a/app/models/task.rb[m
+[1m+++ b/app/models/task.rb[m
+[36m@@ -1,4 +1,6 @@[m
+ class Task < ApplicationRecord[m
+[32m+[m[32m    belongs_to :user[m
+     validates :content, presence: true, length: { maximum: 255 }[m
+     validates :status, presence: true, length: { maximum: 10 }[m
+[32m+[m[41m    [m
+ end[m
+[1mdiff --git a/app/models/user.rb b/app/models/user.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2487408[m
+[1m--- /dev/null[m
+[1m+++ b/app/models/user.rb[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32mclass User < ApplicationRecord[m
+[32m+[m[32m    before_save { self.email.downcase! }[m
+[32m+[m[32m    validates :name, presence: true, length: { maximum: 50 }[m
+[32m+[m[32m    validates :email, presence: true, length: { maximum: 255 },[m
+[32m+[m[32m                    format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i },[m
+[32m+[m[32m                    uniqueness: { case_sensitive: false }[m
+[32m+[m[32m    has_secure_password[m
+[32m+[m[41m    [m
+[32m+[m[32m    has_many :tasks[m
+[32m+[m[32mend[m
+[1mdiff --git a/app/views/layouts/_error_messages.html.erb b/app/views/layouts/_error_messages.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6b53c66[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/layouts/_error_messages.html.erb[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32m<% if model.errors.any? %>[m
+[32m+[m[32m      <% model.errors.full_messages.each do |message| %>[m
+[32m+[m[32m        <li><%= message %></li>[m
+[32m+[m[32m      <% end %>[m
+[32m+[m[32m<% end %>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/sessions/create.html.erb b/app/views/sessions/create.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..c251174[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/sessions/create.html.erb[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32m<h1>Sessions#create</h1>[m
+[32m+[m[32m<p>Find me in app/views/sessions/create.html.erb</p>[m
+[1mdiff --git a/app/views/sessions/destroy.html.erb b/app/views/sessions/destroy.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d75237d[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/sessions/destroy.html.erb[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32m<h1>Sessions#destroy</h1>[m
+[32m+[m[32m<p>Find me in app/views/sessions/destroy.html.erb</p>[m
+[1mdiff --git a/app/views/sessions/new.html.erb b/app/views/sessions/new.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fc202d4[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/sessions/new.html.erb[m
+[36m@@ -0,0 +1,25 @@[m
+[32m+[m[32m<div class="text-center">[m
+[32m+[m[32m  <h1>Log in</h1>[m
+[32m+[m[32m</div>[m
+[32m+[m
+[32m+[m[32m<div class="row">[m
+[32m+[m[32m  <div class="col-sm-6 offset-sm-3">[m
+[32m+[m
+[32m+[m[32m    <%= form_with(url: login_path, scope: :session, local: true) do |f| %>[m
+[32m+[m
+[32m+[m[32m      <div class="form-group">[m
+[32m+[m[32m        <%= f.label :email, 'Email' %>[m
+[32m+[m[32m        <%= f.email_field :email, class: 'form-control' %>[m
+[32m+[m[32m      </div>[m
+[32m+[m
+[32m+[m[32m      <div class="form-group">[m
+[32m+[m[32m        <%= f.label :password, 'Password' %>[m
+[32m+[m[32m        <%= f.password_field :password, class: 'form-control' %>[m
+[32m+[m[32m      </div>[m
+[32m+[m
+[32m+[m[32m      <%= f.submit 'Log in', class: 'btn btn-primary btn-block' %>[m
+[32m+[m[32m    <% end %>[m
+[32m+[m
+[32m+[m[32m    <p>New user? <%= link_to 'Sign up now!', signup_path %></p>[m
+[32m+[m[32m  </div>[m
+[32m+[m[32m</div>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/tasks/_logged_in.html.erb b/app/views/tasks/_logged_in.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..83d4983[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/tasks/_logged_in.html.erb[m
+[36m@@ -0,0 +1,19 @@[m
+[32m+[m[32m<h2>タスク一覧</h2>[m
+[32m+[m[32m<table>[m
+[32m+[m[32m    <thead>[m
+[32m+[m[32m      <tr>[m
+[32m+[m[32m        <th>タスク名</th>[m
+[32m+[m[32m      </tr>[m
+[32m+[m[32m    </thead>[m
+[32m+[m[32m    <tbody>[m
+[32m+[m[32m      <% @tasks.each do |task| %>[m
+[32m+[m[32m        <tr>[m
+[32m+[m[32m          <td><%= task.title %></td>[m
+[32m+[m[32m          <td><%= link_to "編集", edit_task_path(task) %></td>[m
+[32m+[m[32m          <td><%= link_to "削除", task_path(task), method: :delete %></td>[m
+[32m+[m[32m        </tr>[m
+[32m+[m[32m      <% end %>[m
+[32m+[m[32m    </tbody>[m
+[32m+[m[32m</table>[m
+[32m+[m[32m<%= link_to "タスク追加", new_task_path %>[m
+[32m+[m[32m<%= link_to "ログアウト", logout_path, method: :delete %>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/tasks/_not_logged_in.html.erb b/app/views/tasks/_not_logged_in.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1587651[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/tasks/_not_logged_in.html.erb[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32m<p>タスクの管理ができるアプリです。まずはログインをしてください。</p>[m
+[32m+[m[32m<%= link_to "ログイン", login_path%>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/tasks/_tasks.html.erb b/app/views/tasks/_tasks.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a1ba30e[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/tasks/_tasks.html.erb[m
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32m<ul class="list-unstyled">[m
+[32m+[m[32m  <% tasks.each do |task| %>[m
+[32m+[m[32m    <li class="media mb-3">[m
+[32m+[m[32m      <div class="media-body">[m
+[32m+[m[32m        <div>[m
+[32m+[m[32m          <%= link_to task.user.name, user_path(task.user) %> <span class="text-muted">posted at <%= task.created_at %></span>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m        <div>[m
+[32m+[m[32m          <p><%= task.content %></p>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </li>[m
+[32m+[m[32m  <% end %>[m
+[32m+[m[32m  <%= paginate tasks %>[m
+[32m+[m[32m</ul>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/views/tasks/index.html.erb b/app/views/tasks/index.html.erb[m
+[1mindex 21b6013..d44b697 100644[m
+[1m--- a/app/views/tasks/index.html.erb[m
+[1m+++ b/app/views/tasks/index.html.erb[m
+[36m@@ -7,3 +7,5 @@[m
+ </ul>[m
+ [m
+ <%= link_to '新規タスクの投稿', new_task_path %>[m
+[41m+[m
+[41m+[m
+[1mdiff --git a/app/views/users/_users.html.erb b/app/views/users/_users.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ae474d7[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/users/_users.html.erb[m
+[36m@@ -0,0 +1,13 @@[m
+[32m+[m[32m<% if users.any? %>[m
+[32m+[m[32m    <% users.each do |user| %>[m
+[32m+[m[32m    <%= gravatar_url(user, { size: 50 }) %>[m
+[32m+[m[32m       <%= user.name %>[m
+[32m+[m[32m            <p><%= link_to 'View profile', user_path(user) %></p>[m
+[32m+[m[32m       <% end %>[m
+[32m+[m[32m    <%= paginate users %>[m
+[32m+[m[32m<% end %>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<%#Lesson 15Chapter 7.4 %>[m
+[32m+[m
+[32m+[m
+[1mdiff --git a/app/views/users/index.html.erb b/app/views/users/index.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..985fff2[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/users/index.html.erb[m
+[36m@@ -0,0 +1,4 @@[m
+[32m+[m[32m<h1>Users#index</h1>[m
+[32m+[m[32m<p>Find me in app/views/users/index.html.erb</p>[m
+[32m+[m
+[32m+[m[32m<%= render 'users', users: @users %>[m
+[1mdiff --git a/app/views/users/new.html.erb b/app/views/users/new.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4d9c53b[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/users/new.html.erb[m
+[36m@@ -0,0 +1,27 @@[m
+[32m+[m[32m<h1>Users#new</h1>[m
+[32m+[m[32m<p>Find me in app/views/users/new.html.erb</p>[m
+[32m+[m
+[32m+[m[32m<h1>Sign up</h1>[m
+[32m+[m[32m  <%= form_with(model: @user, local: true) do |f| %>[m
+[32m+[m[32m    <%= f.label :name, 'Name' %>[m
+[32m+[m[32m    <%= f.text_field :name, class: 'form-control' %>[m
+[32m+[m
+[32m+[m[32m    <%= f.label :email, 'Email' %>[m
+[32m+[m[32m    <%= f.email_field :email, class: 'form-control' %>[m
+[32m+[m
+[32m+[m[32m    <%= f.label :password, 'Password' %>[m
+[32m+[m[32m    <%= f.password_field :password, class: 'form-control' %>[m
+[32m+[m
+[32m+[m[32m    <%= f.label :password_confirmation, 'Confirmation' %>[m
+[32m+[m[32m    <%= f.password_field :password_confirmation, class: 'form-control' %>[m
+[32m+[m
+[32m+[m[32m    <%= f.submit 'Sign up', class: 'btn btn-primary btn-block' %>[m
+[32m+[m[41m    [m
+[32m+[m[32m    <%= form_with(model: @user, local: true) do |f| %>[m
+[32m+[m[32m      <%= render 'layouts/error_messages', model: f.object %>[m
+[32m+[m
+[32m+[m[32m<% end %>[m
+[32m+[m[32m<% end %>[m
+[32m+[m
+[32m+[m
+[32m+[m
+[1mdiff --git a/app/views/users/show.html.erb b/app/views/users/show.html.erb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ea2612b[m
+[1m--- /dev/null[m
+[1m+++ b/app/views/users/show.html.erb[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32m<%= @user.name %></h3>[m
+[32m+[m[32m      <li class="nav-item"><a href="<%= user_path(@user) %>" class="nav-link <%= 'active' if current_page?(user_path(@user)) %>">Tasks  <span class="badge badge-secondary"><%= @count_tasks %></span></a></li>[m
+[32m+[m[32m      <li class="nav-item"><a href="#" class="nav-link">Followings</a></li>[m
+[32m+[m[32m      <li class="nav-item"><a href="#" class="nav-link">Followers</a></li>[m
+[32m+[m[32m<%= render 'tasks/tasks', tasks: @tasks %>[m
+[1mdiff --git a/config/routes.rb b/config/routes.rb[m
+[1mindex 7cd6036..248dc4b 100644[m
+[1m--- a/config/routes.rb[m
+[1m+++ b/config/routes.rb[m
+[36m@@ -1,6 +1,11 @@[m
+ Rails.application.routes.draw do[m
+[31m-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html[m
+[31m-    root to: 'tasks#index'[m
+[31m-    [m
+[31m-    resources :tasks[m
+[31m-end[m
+[32m+[m[32m  root to: 'tasks#index'[m
+[32m+[m
+[32m+[m[32m  get 'login', to: 'sessions#new'[m
+[32m+[m[32m  post 'login', to: 'sessions#create'[m
+[32m+[m[32m  delete 'logout', to: 'sessions#destroy'[m
+[32m+[m
+[32m+[m[32m  get 'signup', to: 'users#new'[m
+[32m+[m[32m  resources :users, only: [:index, :show, :new, :create][m
+[32m+[m[32m  resources :tasks, only: [:index, :create, :destroy, :edit, :new][m
+[32m+[m[32mend[m
+\ No newline at end of file[m
+[1mdiff --git a/db/migrate/20210128195433_create_tasks.rb b/db/migrate/20210128195433_create_tasks.rb[m
+[1mindex 38f0b6a..5316fcf 100644[m
+[1m--- a/db/migrate/20210128195433_create_tasks.rb[m
+[1m+++ b/db/migrate/20210128195433_create_tasks.rb[m
+[36m@@ -1,9 +1,10 @@[m
+[31m-class CreateTasks < ActiveRecord::Migration[5.2][m
+[32m+[m[32mclass CreateMicroposts < ActiveRecord::Migration[5.2][m
+   def change[m
+     create_table :tasks do |t|[m
+       t.string :content[m
+[32m+[m[32m      t.references :user, foreign_key: true[m
+ [m
+       t.timestamps[m
+     end[m
+   end[m
+[31m-end[m
+[32m+[m[32mend[m
+\ No newline at end of file[m
+[1mdiff --git a/db/migrate/20210206212607_create_users.rb b/db/migrate/20210206212607_create_users.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4822749[m
+[1m--- /dev/null[m
+[1m+++ b/db/migrate/20210206212607_create_users.rb[m
+[36m@@ -0,0 +1,11 @@[m
+[32m+[m[32mclass CreateUsers < ActiveRecord::Migration[5.2][m
+[32m+[m[32m  def change[m
+[32m+[m[32m    create_table :users do |t|[m
+[32m+[m[32m      t.string :name[m
+[32m+[m[32m      t.string :email[m
+[32m+[m[32m      t.string :password_digest[m
+[32m+[m
+[32m+[m[32m      t.timestamps[m
+[32m+[m[32m    end[m
+[32m+[m[32m  end[m
+[32m+[m[32mend[m
+[1mdiff --git a/db/migrate/20210209192833_add_user_to_tasks.rb b/db/migrate/20210209192833_add_user_to_tasks.rb[m
+[1mnew file mode 100644[m
+[1mindex 0000000..7de7b54[m
+[1m--- /dev/null[m
+[1m+++ b/db/migrate/20210209192833_add_user_to_tasks.rb[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32mclass AddUserToTasks < ActiveRecord::Migration[5.2][m
+[32m+[m[32m  def change[m
+[32m+[m[32m    add_reference :tasks, :user, foreign_key: true[m
+[32m+[m[32m  end[m
+[32m+[m[32mend[m
+[1mdiff --git a/db/schema.rb b/db/schema.rb[m
+[1mindex c33e989..e8e1ba4 100644[m
+[1m--- a/db/schema.rb[m
+[1m+++ b/db/schema.rb[m
+[36m@@ -10,13 +10,24 @@[m
+ #[m
+ # It's strongly recommended that you check this file into your version control system.[m
+ [m
+[31m-ActiveRecord::Schema.define(version: 2021_02_02_185219) do[m
+[32m+[m[32mActiveRecord::Schema.define(version: 2021_02_09_192833) do[m
+ [m
+   create_table "tasks", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|[m
+     t.string "content"[m
+     t.datetime "created_at", null: false[m
+     t.datetime "updated_at", null: false[m
+     t.string "status"[m
+[32m+[m[32m    t.bigint "user_id"[m
+[32m+[m[32m    t.index ["user_id"], name: "index_tasks_on_user_id"[m
+   end[m
+ [m
+[32m+[m[32m  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|[m
+[32m+[m[32m    t.string "name"[m
+[32m+[m[32m    t.string "email"[m
+[32m+[m[32m    t.string "password_digest"[m
+[32m+[m[32m    t.datetime "created_at", null: false[m
+[32m+[m[32m    t.datetime "updated_at", null: false[m
+[32m+[m[32m  end[m
+[32m+[m
+[32m+[m[32m  add_foreign_key "tasks", "users"[m
+ end[m
