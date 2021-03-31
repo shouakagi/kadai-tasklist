@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get 'tasklist/create'
-  get 'tasklist/destroy'
   get 'toppages/index'
 
   root to: 'tasks#index'
