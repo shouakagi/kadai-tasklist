@@ -1,15 +1,16 @@
 class TasksController < ApplicationController
-
-    before_action :set_task, only: [:show, :edit,:update, :destroy]
-    before_action :correct_user, only: [:show, :edit,:update, :destroy]
     before_action :require_user_logged_in
+    before_action :correct_user, only: [:show, :edit,:update, :destroy]
+   
 
     def index
-      @tasks = Task.all
+       if logged_in?
+            @task = current_user.tasks.build  # form_with 用
+            @tasks = current_user.tasks.order(id: :desc).page(params[:page])
+        end
     end
 
     def show
-       set_task
     end
   
   
@@ -36,13 +37,12 @@ class TasksController < ApplicationController
       end
 
     def update
-        set_task
         if @task.update(task_params)
            flash[:success] = 'タスクが編集されました'
             redirect_to @task
         else
            flash.now[:danger] = 'タスクが編集されませんでした'
-            render :new
+            render :edit
         end
     end
     
@@ -58,9 +58,6 @@ class TasksController < ApplicationController
         params.require(:task).permit(:content, :status)
     end
 
-    def set_task
-        @task = current_user.tasks.find_by(id: params[:id])
-    end
     
     def correct_user
         @task = current_user.tasks.find_by(id: params[:id])
